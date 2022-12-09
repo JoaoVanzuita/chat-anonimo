@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang='pt-br'>
+<head>
+	<meta charset='UTF-8'>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+	<title>Chat Online</title>
+	<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+	<div class='display'>
+	</div>
+
+	<form>
+			<input name='msg' placeholder='Insira sua mensagem'>
+	</form>
+
+	<script>
+		const display = document.querySelector('.display')
+		const form = document.querySelector('form')
+
+
+		const showMessage = (text, isMine = false) => {
+
+			const messageRow = document.createElement('div')
+			messageRow.classList.add('message-row')
+			messageRow.classList.add(`${isMine ? 'mine' : 'theirs'}`)
+
+			const bubble = document.createElement('div')
+			bubble.classList.add('bubble')
+			bubble.innerText = text
+
+			messageRow.append(bubble)
+
+			display.append(messageRow)
+		}
+
+		var ws = new WebSocket('ws://127.0.0.1:8080')
+
+		ws.addEventListener('message', ev => showMessage(ev.data))
+
+		form.addEventListener('submit', ev => {
+			ev.preventDefault()
+			ws.send(form.msg.value)
+
+			showMessage(form.msg.value, true)
+
+			form.msg.value = ''
+		})
+
+	</script>
+</body>
+</html>
